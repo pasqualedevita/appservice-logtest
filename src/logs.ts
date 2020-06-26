@@ -1,5 +1,7 @@
 import logform from "logform";
-import { createLogger, format, transports } from "winston";
+import { createLogger, format } from "winston";
+
+const azureBlobTransport = require("winston3-azureblob-transport");
 
 const { timestamp, printf } = logform.format;
 
@@ -14,5 +16,16 @@ export const getLogger = (level: string) =>
       })
     ),
     level,
-    transports: [new transports.Console()],
+    transports: [
+      new (azureBlobTransport)({
+        account: {
+          name: process.env.LOG_BLOBSTORAGE_STORAGEACCOUNT,
+          key: process.env.LOG_BLOBSTORAGE_PRIMARYKEY || "" // base64 connection string
+        },
+        containerName: process.env.LOG_BLOBSTORAGE_CONTAINERNAME,
+        blobName: process.env.LOG_BLOBSTORAGE_BLOBNAME,
+        level: "info",
+        rotatePeriod: "YYYY-MM-DD"
+      })
+    ]
   });

@@ -16,7 +16,7 @@ const getRequiredENVVar = makeGetRequiredENVVar(logger);
 appInsights.setup();
 appInsights.defaultClient.context.tags[
     appInsights.defaultClient.context.keys.cloudRole
-] = "apigad";
+] = "appservice-log";
 appInsights.start();
 
 app.get("/test", (req, res) => {
@@ -24,6 +24,4 @@ app.get("/test", (req, res) => {
     logger.info("test log");
 });
 
-app.listen(3000, () => {
-    console.log("Porta 3000 in ascolto.");
-});
+app.listen(process.env.PORT || 8080);
